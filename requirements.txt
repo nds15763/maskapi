@@ -1,0 +1,8 @@
+FastAPI
+APScheduler
+gunicorn
+configparser
+numpy
+moviepy
+uvicorn
+opencv-python

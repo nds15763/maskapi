@@ -1,8 +1,6 @@
-from typing import Union
 from videoService import picToVideo
 from fastapi import FastAPI, File, UploadFile
 from typing import List
-from conf import Conf
 from starlette.responses import FileResponse
 
 import uvicorn

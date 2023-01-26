@@ -5,6 +5,9 @@ import configparser
 import os
 
 class Upload:
+    def __init__(self):
+        self.scheduler = BackgroundScheduler()
+
     def readUploadFile(self):
         curpath = os.path.dirname(os.path.realpath(__file__))
         cfgpath = os.path.join(curpath, "upload.ini")
@@ -15,13 +18,12 @@ class Upload:
         conf.read(cfgpath, encoding="utf-8")  # python3
         return conf
 
-    def cron_job(self):
+    def deleteUploadFile(self):
         conf = self.readUploadFile()
         allUploadTaskID = dict(conf["upload_file"])
 
+    def deleteUploadFileCron(self):
+        self.scheduler.add_job(self.deleteUploadFile, 'interval', hours=1)
  
-# scheduler = BackgroundScheduler()
-# #每小时一次
-# scheduler.add_job(cron_job, 'interval', hours=1)
- 
-# scheduler.start()
+    def cronStart(self):
+        self.scheduler.start()
