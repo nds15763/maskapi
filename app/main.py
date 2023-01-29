@@ -2,9 +2,7 @@ from videoService import picToVideo
 from fastapi import FastAPI, File, UploadFile
 from typing import List
 from starlette.responses import FileResponse
-
 import uvicorn
-
 
 app = FastAPI()
 

@@ -6,3 +6,4 @@ numpy
 moviepy
 uvicorn
 opencv-python
+python-multipart
