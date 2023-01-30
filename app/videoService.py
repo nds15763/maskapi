@@ -7,7 +7,6 @@ import numpy as np
 from typing import List
 from conf import Conf
 import response
-import re
 
 class picToVideo:
     taskUUID = "" #本次任务UUID
@@ -32,6 +31,7 @@ class picToVideo:
 
 
     def creatUploadTask(self):
+        logger.info("creatUploadTask request self:%s" % self.__dict__)
         #保存文件
         for file in self.taskFiles:
             #保存图片文件
