@@ -29,7 +29,7 @@ def read_root(request: Request):
 async def create_upload_files(request: Request,files: List[UploadFile] = File(...)):
     p = picToVideo(files)
     request.app.logger.info("create_upload_files request")
-    reFileName = picToVideo.creatUploadTask(p,logger)
+    reFileName = picToVideo.creatUploadTask(p,request)
     return FileResponse(
             reFileName,
             filename=reFileName,

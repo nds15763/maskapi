@@ -5,6 +5,8 @@ import sys
 from pathlib import Path
 from loguru import logger
 import json
+import os
+import time
 
 
 class InterceptHandler(logging.Handler):
@@ -44,7 +46,7 @@ class CustomizeLogger:
         logging_config = config.get('logger')
 
         logger = cls.customize_logging(
-            logging_config.get('path') ,
+            filepath= os.path.join(logging_config.get('path'), f'maskapi_{time.strftime("%Y-%m-%d")}.log'),
             level=logging_config.get('level'),
             retention=logging_config.get('retention'),
             rotation=logging_config.get('rotation'),
