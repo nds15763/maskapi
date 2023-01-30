@@ -1,6 +1,6 @@
 {
     "logger": {
-      "path": "./logs",
+      "path": "../logs",
       "filename": "maskapi.log",
       "level": "info",
       "rotation": "1 days",
