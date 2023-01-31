@@ -56,6 +56,8 @@ class picToVideo:
         self.greenScrean()
         #打开视频
         video = self.openVideo(self.uploadVideoPath+self.uploadVideo,request)
+        #去掉视频声音
+        video = self.muteVideo(video,request)
         #制作遮罩层
         self.picToImgMask(video,request)
         return self.outputVideo
@@ -99,6 +101,11 @@ class picToVideo:
         request.app.logger.info("openVideo vPath:%s"%vPath)
         clip = VideoFileClip(vPath)
         return clip
+
+    def muteVideo(self,video,request):
+        request.app.logger.info("muteVideo")
+        muteClip = video.without_audio()
+        return muteClip
 
     def greenScrean(self):
         # todo 读取并转换图片格式
@@ -144,3 +151,11 @@ class picToVideo:
             return True
         else:
             return False
+
+    def safeUploadFile(self,files,request):
+        file = files[0]
+        re,code = self.saveFile(self.uploadVideoPath,file,"video",request)
+        if not re:
+            request.app.logger.error("creatUploadTask saveImgFile code:%d"%code)
+            return response.Response(code)
+        return self.uploadVideoPath+self.uploadVideo

@@ -25,6 +25,14 @@ def read_root(request: Request):
     request.app.logger.info("Hello MaskAPI!")
     return {"Hello": "World"}
 
+@app.post("/uploadfile/")
+async def create_upload_file(request:Request,files: List[UploadFile] = File(...)):
+    p = picToVideo(files)
+    fDownload = picToVideo.safeUploadFile(p,files,request)
+    return FileResponse(
+        fDownload,
+    )
+
 @app.post("/tk/greenscreen/")
 async def create_upload_files(request: Request,files: List[UploadFile] = File(...)):
     p = picToVideo(files)
