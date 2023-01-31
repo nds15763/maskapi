@@ -3,3 +3,4 @@
 /video/
 /out_video/
 /logs/*.log
+./logs/*.log
