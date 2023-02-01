@@ -27,12 +27,12 @@ class CreativeService:
     def __init__(self) -> None:
         pass
  
-    def GetCreative(r, req):
-        creative = DB.GetCreative(req.creativeID)
+    def GetCreative(r, creativeID):
+        creative = DB.GetCreative(creativeID)
 
         #获取创意内容
         resp=CreativeResponse
-        resp.creativeID = req.creativeID
+        resp.creativeID = creativeID
         resp.videoID = creative.videoID
 
         #根据videoID获取原始视频路径

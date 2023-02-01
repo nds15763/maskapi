@@ -39,10 +39,10 @@ async def CreateUploadFileHandler(r:Request,files: List[UploadFile] = File(...))
     )
 
 #根据创意ID获取合成视频视频
-@app.post("/tk/getcreate/")
-async def GetCreateHandler(r: Request,req :CreativeRequest):
+@app.get("/tk/getcreate/id={created_id}")
+async def GetCreateHandler(r: Request,created_id :int):
     r.app.logger.info("GetCreateHandler Request")
-    resp = CreativeService.GetCreative(r,req)
+    resp = CreativeService.GetCreative(r,created_id)
     return JSONResponse(content={"video_src":resp.videoDownloadSrc})
 
 #根据创意ID获取合成视频视频

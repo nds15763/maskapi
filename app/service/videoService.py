@@ -61,8 +61,9 @@ class VideoService:
         video = self.openVideo(self,self.TempVideoPath+creative.videoName, request)
         #去掉视频声音
         video = self.muteVideo(self,video,request)
+        filename = self.taskUUID+".mp4"
         #制作遮罩层
-        self.picToImgMask(self,video,request)
+        self.picToImgMask(self,video,filename,request)
         return self.outputVideo
 
     def CreatUploadTask(self,request):
@@ -94,9 +95,10 @@ class VideoService:
         video = self.openVideo(self,self.uploadVideoPath+self.uploadVideo,request)
         #去掉视频声音
         video = self.muteVideo(self,video,request)
+        outFileName = self.uploadVideo
         #制作遮罩层
-        self.picToImgMask(self,video,request)
-        return self.outputVideo
+        self.picToImgMask(self,video,outFileName,request)
+        return self.outputVideoPath+self.outputVideo
 
     def saveFile(self,path,file,ftype,request):
         request.app.logger.info("saveFile path:%s,file:%s,ftype:%s"%(path,file,ftype))
@@ -122,14 +124,14 @@ class VideoService:
         request.app.logger.info("saveFile success filename:%s"%save_file)
         return True,200
 
-    def picToImgMask(self,video,request):
+    def picToImgMask(self,video,filename,request):
         request.app.logger.info("picToImgMask request")
         picBg = self.uploadImgPath+self.cvTmpImg
-        self.outputVideo = self.outputVideoPath+"output_"+self.uploadVideo
+        self.outputVideo = filename
         mask = (ImageClip(picBg)
                     .set_duration(video.duration) 
                     .resize(video.size))
-        CompositeVideoClip([video, mask]).write_videofile(self.outputVideo)
+        CompositeVideoClip([video, mask]).write_videofile(self.outputVideoPath+self.outputVideo)
         request.app.logger.info("picToImgMask success outputfile:%s"%self.outputVideo)
         return self.outputVideo
 

@@ -1,6 +1,10 @@
 /app/__pycache__/
 /img/
 /video/
+/upload/img/
+/upload/video/
+/template/img/
+/template/video/
 /out_video/
 /logs/*.log
 ./logs/*.log
