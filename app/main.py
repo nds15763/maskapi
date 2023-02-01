@@ -46,7 +46,7 @@ async def GetCreateHandler(r: Request,created_id :int):
     return JSONResponse(content={"video_src":resp.videoDownloadSrc})
 
 #根据创意ID获取合成视频视频
-@app.get("/tk/download/{video}")
+@app.get("/tk/download/v={video}")
 async def TkDownload(r: Request,video :str):
     r.app.logger.info("TkDownload Request")
     p = VideoService
