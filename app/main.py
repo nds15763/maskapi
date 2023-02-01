@@ -1,5 +1,7 @@
 from service.videoService import VideoService
 from fastapi import FastAPI, File, UploadFile,HTTPException,Request
+from fastapi.responses import JSONResponse
+from fastapi.encoders import jsonable_encoder
 from typing import List
 from starlette.responses import FileResponse
 from log.custom_logging import CustomizeLogger
@@ -28,25 +30,37 @@ def read_root(request: Request):
 
 @app.post("/uploadvideo/")
 async def CreateUploadFileHandler(r:Request,files: List[UploadFile] = File(...)):
-    p = VideoService(files)
+    p = VideoService    
+    VideoService.SetFiles(files)
     fDownload = VideoService.safeUploadFile(p,files,r)
     return FileResponse(
         fDownload,
+        filename=fDownload,
     )
 
 #根据创意ID获取合成视频视频
 @app.post("/tk/getcreate/")
 async def GetCreateHandler(r: Request,req :CreativeRequest):
     r.app.logger.info("GetCreateHandler Request")
-    reFileName = CreativeService.GetCreative(r,req)
+    resp = CreativeService.GetCreative(r,req)
+    return JSONResponse(content={"video_src":resp.videoDownloadSrc})
+
+#根据创意ID获取合成视频视频
+@app.post("/tk/download/")
+async def TkDownload(r: Request,req :str):
+    r.app.logger.info("TkDownload Request")
+    p = VideoService
+    VideoService.SetConf(p)
+    path = VideoService.DownloadPath(p,req)
     return FileResponse(
-            reFileName,
-            filename=reFileName,
-        )
+        path,
+        filename=req,
+    )
 
 @app.post("/tk/greenscreen/")
 async def CreateUploadFilesHandler(r: Request,files: List[UploadFile] = File(...)):
-    p = VideoService(files)
+    p = VideoService
+    VideoService.SetFiles(p,files)
     r.app.logger.info("create_upload_files request")
     reFileName = VideoService.CreatUploadTask(p,r)
     return FileResponse(

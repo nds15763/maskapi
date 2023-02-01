@@ -8,3 +8,5 @@ uvicorn
 opencv-python
 python-multipart
 loguru
+pydantic
+sqlalchemy

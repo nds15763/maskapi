@@ -4,7 +4,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from typing import List
 from sqlalchemy.orm import Session
-import models
+import db.models as models
 
 DATABASE_URL = "mysql+mysqldb://db_admin:Xxp719765843,.@host/mask_db"
 
@@ -15,8 +15,38 @@ class DB:
         self.SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=self.db_engine)
         self.Base = declarative_base()
 
-    def GetCreative(db: Session, creative_id: int):
-        return db.query(models.Creative).filter(models.Creative.creativeid == creative_id).first()
+    def GetCreative(creativeID: int):
+        # return db.query(models.Creative).filter(models.Creative.creativeid == creative_id).first()
+        re = models.Creative
+        if creativeID == 1:
+            re.creativeID = 1
+            re.videoID = 1
+            re.picID = 1
+        return re
+
+    def GetVideo(video_id: int):
+        re = models.Video
+        if video_id == 1:
+            re.videoID = 1
+            re.videoName = "tmp_vitamin_babe_video.mp4"
+        elif video_id == 2:
+            re.videoID = 2
+            re.videoSrc
+            re.videoName
+        elif video_id == 3:
+            re.videoID = 3
+            re.videoSrc
+            re.videoName
+        elif video_id == 4:
+            re.videoID = 4
+            re.videoSrc
+            re.videoName
+        else:
+            raise Exception("Sorry, no such video_id")
+
+        return re
+
+        #return db.query(models.Video).filter(models.Video.videoid == video_id).first()
 
     # def get_user(db: Session, user_id: int):
     #     return db.query(models.User).filter(models.User.id == user_id).first()

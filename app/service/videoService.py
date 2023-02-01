@@ -19,30 +19,66 @@ class VideoService:
     outputVideoPath = "" #生成视频路径
     outputVideo = "" #生成视频名称
     cvTmpImg = "" #opencv处理图片名称
-    
+    TempPicPath = ""
+    TempVideoPath = ""
 
-    def __init__(self, files):
+    def __init__(self):
+        self.SetConf(self)
+        self.uploadPic = ""
+        self.uploadVideo = ""
+
+    def SetUUID(self):
         self.taskUUID = uuid.uuid4().hex
+
+    def SetFiles(self,files):
+        self.SetUUID(self)
         self.taskFiles = files
+
+    def SetConf(self):
         conf = Conf()
         self.uploadImgPath = conf.uploadImgPath
         self.uploadVideoPath = conf.uploadVideoPath
         self.outputVideoPath = conf.outputVideoPath
+        self.TempPicPath = conf.tempImgPath
+        self.TempVideoPath = conf.tempVideoPath
 
+    def DownloadPath(self,name):
+        return self.outputVideoPath+name
+
+
+    #根据照片路径和视频路径制作抠图视频
+    def MakeNewVideoByPicVideoPath(self,creative,request):
+        self.SetConf(self)
+        self.SetUUID(self)
+        request.app.logger.info("MakeNewVideoByPicVideoPath request creative:%s" % creative.__dict__)
+        #赋值结构体
+        self.uploadPic = creative.picName
+        self.uploadVideo = creative.videoName
+
+        #图片扣色，或者扣好了传上去也行
+        self.greenScrean(self,self.TempPicPath,creative.picName)
+        #打开视频
+        video = self.openVideo(self,self.TempVideoPath+creative.videoName, request)
+        #去掉视频声音
+        video = self.muteVideo(self,video,request)
+        #制作遮罩层
+        self.picToImgMask(self,video,request)
+        return self.outputVideo
 
     def CreatUploadTask(self,request):
         request.app.logger.info("creatUploadTask request self:%s" % self.__dict__)
+        self.SetConf(self)
         #保存文件
         for file in self.taskFiles:
             #保存图片文件
-            if (self.detect_picture(file.filename,request)):
-                re,code = self.saveFile(self.uploadImgPath,file,"pic",request)
+            if (self.detect_picture(self,file.filename,request)):
+                re,code = self.saveFile(self,self.uploadImgPath,file,"pic",request)
                 if not re:
                     request.app.logger.error("creatUploadTask saveImgFile code:%d"%code)
                     return response.Response(code)
             #保存视频文件
-            elif (self.detect_video(file.filename,request)):
-                re,code = self.saveFile(self.uploadVideoPath,file,"video",request)
+            elif (self.detect_video(self,file.filename,request)):
+                re,code = self.saveFile(self,self.uploadVideoPath,file,"video",request)
                 if not re:
                     request.app.logger.error("creatUploadTask saveImgFile code:%d"%code)
                     return response.Response(code)
@@ -53,13 +89,13 @@ class VideoService:
                 return response.Response("602")
 
         #图片扣色，或者扣好了传上去也行
-        self.greenScrean()
+        self.greenScrean(self,self.uploadImgPath, self.uploadPic)
         #打开视频
-        video = self.openVideo(self.uploadVideoPath+self.uploadVideo,request)
+        video = self.openVideo(self,self.uploadVideoPath+self.uploadVideo,request)
         #去掉视频声音
-        video = self.muteVideo(video,request)
+        video = self.muteVideo(self,video,request)
         #制作遮罩层
-        self.picToImgMask(video,request)
+        self.picToImgMask(self,video,request)
         return self.outputVideo
 
     def saveFile(self,path,file,ftype,request):
@@ -107,9 +143,9 @@ class VideoService:
         muteClip = video.without_audio()
         return muteClip
 
-    def greenScrean(self):
+    def greenScrean(self,imgPath,picName):
         # todo 读取并转换图片格式
-        opencv = cv2.imread(self.uploadImgPath + self.uploadPic)
+        opencv = cv2.imread(imgPath + picName)
         hsv = cv2.cvtColor(opencv, cv2.COLOR_RGB2HSV)
 
         # todo 指定绿色范围,60表示绿色，我取的范围是-+10
