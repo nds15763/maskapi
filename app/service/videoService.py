@@ -5,10 +5,10 @@ from fastapi import FastAPI, File, UploadFile,Request
 import uuid
 import numpy as np
 from typing import List
-from conf import Conf
+from conf.conf import Conf
 import response
 
-class picToVideo:
+class VideoService:
     taskUUID = "" #本次任务UUID
     taskFiles = List[UploadFile]
     uploadPic = "" #上传图片名称
@@ -30,7 +30,7 @@ class picToVideo:
         self.outputVideoPath = conf.outputVideoPath
 
 
-    def creatUploadTask(self,request):
+    def CreatUploadTask(self,request):
         request.app.logger.info("creatUploadTask request self:%s" % self.__dict__)
         #保存文件
         for file in self.taskFiles:

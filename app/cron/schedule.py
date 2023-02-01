@@ -1,4 +1,4 @@
-import schedule
+import cron.schedule as schedule
 import time
 
 # 定义你要周期运行的函数

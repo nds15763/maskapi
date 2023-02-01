@@ -1,8 +1,9 @@
-from videoService import picToVideo
+from service.videoService import VideoService
 from fastapi import FastAPI, File, UploadFile,HTTPException,Request
 from typing import List
 from starlette.responses import FileResponse
-from custom_logging import CustomizeLogger
+from log.custom_logging import CustomizeLogger
+from service.creativeService import CreativeService,CreativeRequest
 from pathlib import Path
 import uvicorn
 import logging
@@ -25,19 +26,29 @@ def read_root(request: Request):
     request.app.logger.info("Hello MaskAPI!")
     return {"Hello": "World"}
 
-@app.post("/uploadfile/")
-async def create_upload_file(request:Request,files: List[UploadFile] = File(...)):
-    p = picToVideo(files)
-    fDownload = picToVideo.safeUploadFile(p,files,request)
+@app.post("/uploadvideo/")
+async def CreateUploadFileHandler(r:Request,files: List[UploadFile] = File(...)):
+    p = VideoService(files)
+    fDownload = VideoService.safeUploadFile(p,files,r)
     return FileResponse(
         fDownload,
     )
 
+#根据创意ID获取合成视频视频
+@app.post("/tk/getcreate/")
+async def GetCreateHandler(r: Request,req :CreativeRequest):
+    r.app.logger.info("GetCreateHandler Request")
+    reFileName = CreativeService.GetCreative(r,req)
+    return FileResponse(
+            reFileName,
+            filename=reFileName,
+        )
+
 @app.post("/tk/greenscreen/")
-async def create_upload_files(request: Request,files: List[UploadFile] = File(...)):
-    p = picToVideo(files)
-    request.app.logger.info("create_upload_files request")
-    reFileName = picToVideo.creatUploadTask(p,request)
+async def CreateUploadFilesHandler(r: Request,files: List[UploadFile] = File(...)):
+    p = VideoService(files)
+    r.app.logger.info("create_upload_files request")
+    reFileName = VideoService.CreatUploadTask(p,r)
     return FileResponse(
             reFileName,
             filename=reFileName,

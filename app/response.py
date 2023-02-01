@@ -1,4 +1,4 @@
-from conf import Conf
+from conf.conf import Conf
 
 def Response(err_code):
     return {
