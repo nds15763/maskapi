@@ -46,15 +46,15 @@ async def GetCreateHandler(r: Request,created_id :int):
     return JSONResponse(content={"video_src":resp.videoDownloadSrc})
 
 #根据创意ID获取合成视频视频
-@app.post("/tk/download/")
-async def TkDownload(r: Request,req :str):
+@app.post("/tk/download/{video}")
+async def TkDownload(r: Request,video :str):
     r.app.logger.info("TkDownload Request")
     p = VideoService
     VideoService.SetConf(p)
-    path = VideoService.DownloadPath(p,req)
+    path = VideoService.DownloadPath(p,video)
     return FileResponse(
         path,
-        filename=req,
+        filename=video,
     )
 
 @app.post("/tk/greenscreen/")
