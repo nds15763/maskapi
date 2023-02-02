@@ -73,8 +73,9 @@ async def CreateUploadFilesHandler(r: Request,files: List[UploadFile] = File(...
 @app.on_event("startup")
 @repeat_every(seconds=60*60,wait_first=True)
 def Cronjob():
-    result = Cron.CronJob.CronDeleteUploadedFile()
-    print("CronJob StartUp:"+result)
+    print("CronJob StartUp")
+    Cron.CronJob.CronDeleteUploadedFile()
+    print("CronJob Finished")
 
 if __name__ == "__main__":
     uvicorn.run(app="main:app", host="127.0.0.1", port=8080, reload=True)
