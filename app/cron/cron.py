@@ -1,29 +1,37 @@
-from datetime import datetime
-from datetime import date
-from apscheduler.schedulers.background import BackgroundScheduler
-import configparser
+from conf.conf import Conf
 import os
+import datetime
 
-class Upload:
-    def __init__(self):
-        self.scheduler = BackgroundScheduler()
+class CronJob:
+    def CronDeleteUploadedFile():
+        #每天夜里2点，删除上传过的照片和视频
+        if datetime.datetime.now().hour == 4:
+            conf = Conf()
 
-    def readUploadFile(self):
-        curpath = os.path.dirname(os.path.realpath(__file__))
-        cfgpath = os.path.join(curpath, "upload.ini")
-        print('读取配置文件成功: +',cfgpath)  # cfg.ini的路径
-        # 创建管理对象
-        conf = configparser.ConfigParser()
-        # 读ini文件
-        conf.read(cfgpath, encoding="utf-8")  # python3
-        return conf
+            img_list = []
+            for root, dirs, files in os.walk(conf.uploadImgPath):
+                img_list.append(root)
+                print("执行定时任务:删除上传照片文件")
+                print("共清理:"+files.count()+"个")
+            for name in files:
+                if name.endswith(".png" ) or name.endswith(".jpg") or name.endswith(".webp") or name.endswith(".jpeg"):
+                    os.remove(os.path.join(root, name))
 
-    def deleteUploadFile(self):
-        conf = self.readUploadFile()
-        allUploadTaskID = dict(conf["upload_file"])
 
-    def deleteUploadFileCron(self):
-        self.scheduler.add_job(self.deleteUploadFile, 'interval', hours=1)
- 
-    def cronStart(self):
-        self.scheduler.start()
+            video_list = []
+            for root, dirs, files in os.walk(conf.uploadVideoPath):
+                video_list.append(root)
+                print("执行定时任务:删除上传视频文件")
+                print("共清理:"+files.count()+"个")
+            for name in files:
+                if name.endswith(".mp4"):
+                    os.remove(os.path.join(root, name))
+
+            out_video_list = []
+            for root, dirs, files in os.walk(conf.outputVideoPath):
+                out_video_list.append(root)
+                print("执行定时任务:删除生成视频文件")
+                print("共清理:"+files.count()+"个")
+            for name in files:
+                if name.endswith(".mp4"):
+                    os.remove(os.path.join(root, name))
