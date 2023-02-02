@@ -81,12 +81,12 @@ class VideoService:
             elif (self.detect_video(self,file.filename,request)):
                 re,code = self.saveFile(self,self.uploadVideoPath,file,"video",request)
                 if not re:
-                    request.app.logger.error("creatUploadTask saveImgFile code:%d"%code)
+                    request.app.logger.error("creatUploadTask saveVideoFile code:%d"%code)
                     return response.Response(code)
                 else:
                     continue
             else:
-                request.app.logger.error("creatUploadTask saveImgFile code:%d"%602)
+                request.app.logger.error("creatUploadTask UnknowFileType code:%d"%602)
                 return response.Response("602")
 
         #图片扣色，或者扣好了传上去也行
@@ -178,17 +178,12 @@ class VideoService:
     
     def detect_picture(self,file,request):
         request.app.logger.info("detect_picture filename:%s"%file)
-        if (file.split(sep='.')[-1] == 'jpg') or (file.split(sep='.')[-1] == 'png') or (file.split(sep='.')[-1] == 'jpeg') or (file.split(sep='.')[-1] == 'webp'):
-            return True
-        else:
-            return False
+        return file.casefold().endswith(".png" ) or file.casefold().endswith(".jpg") or file.casefold().endswith(".webp") or file.casefold().endswith(".jpeg")
+
         
     def detect_video(self,file,request):
-        request.app.logger.info("detect_picture filename:%s"%file)
-        if (file.split(sep='.')[-1] == 'mp4'):
-            return True
-        else:
-            return False
+        request.app.logger.info("detect_video filename:%s"%file)
+        return file.casefold().endswith(".mp4" )
 
     def safeUploadFile(self,files,request):
         file = files[0]

@@ -14,7 +14,7 @@ class CronJob:
                 print("执行定时任务:删除上传照片文件")
                 print("共清理:"+files.count()+"个")
             for name in files:
-                if name.endswith(".png" ) or name.endswith(".jpg") or name.endswith(".webp") or name.endswith(".jpeg"):
+                if name.casefold().endswith(".png" ) or name.casefold().endswith(".jpg") or name.casefold().endswith(".webp") or name.casefold().endswith(".jpeg"):
                     os.remove(os.path.join(root, name))
 
 
@@ -24,7 +24,7 @@ class CronJob:
                 print("执行定时任务:删除上传视频文件")
                 print("共清理:"+files.count()+"个")
             for name in files:
-                if name.endswith(".mp4"):
+                if name.casefold().endswith(".mp4"):
                     os.remove(os.path.join(root, name))
 
             out_video_list = []
@@ -33,5 +33,5 @@ class CronJob:
                 print("执行定时任务:删除生成视频文件")
                 print("共清理:"+files.count()+"个")
             for name in files:
-                if name.endswith(".mp4"):
+                if name.casefold().endswith(".mp4"):
                     os.remove(os.path.join(root, name))
