@@ -7,6 +7,7 @@ import numpy as np
 from typing import List
 from conf.conf import Conf
 import response
+import db.crud as crud
 
 class VideoService:
     taskUUID = "" #本次任务UUID
@@ -42,14 +43,19 @@ class VideoService:
         self.TempPicPath = conf.tempImgPath
         self.TempVideoPath = conf.tempVideoPath
 
-    def DownloadPath(self,name):
-        return self.outputVideoPath+name
+    def DownloadPath(self,task_id):
+        task = crud.GetTask(task_id)
+        if task == None:
+            return response.Response("604")
+        return self.outputVideoPath+task.OutVideoSrc
 
+    def GetNewTaskUUID(self):
+        self.SetUUID(self)
+        return self.taskUUID
 
     #根据照片路径和视频路径制作抠图视频
     def MakeNewVideoByPicVideoPath(self,creative,request):
         self.SetConf(self)
-        self.SetUUID(self)
         request.app.logger.info("MakeNewVideoByPicVideoPath request creative:%s" % creative.__dict__)
         #赋值结构体
         self.uploadPic = creative.picName
@@ -64,7 +70,10 @@ class VideoService:
         filename = self.taskUUID+".mp4"
         #制作遮罩层
         self.picToImgMask(self,video,filename,request)
-        return self.outputVideo
+        #更新进度
+        crud.UpdateTask(1,self.taskUUID,self.outputVideo)
+
+        return
 
     def CreatUploadTask(self,request):
         request.app.logger.info("creatUploadTask request self:%s" % self.__dict__)

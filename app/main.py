@@ -44,19 +44,19 @@ async def CreateUploadFileHandler(r:Request,files: List[UploadFile] = File(...))
 @app.get("/tk/getcreate/id={created_id}")
 async def GetCreateHandler(r: Request,created_id :int):
     r.app.logger.info("GetCreateHandler Request")
-    resp = CreativeService.GetCreative(r,created_id)
-    return JSONResponse(content={"video_src":resp.videoDownloadSrc})
+    taskId = CreativeService.GetCreative(r,created_id)
+    return  {"taskID": taskId}
 
 #根据创意ID获取合成视频视频
-@app.get("/tk/download/v={video}")
-async def TkDownload(r: Request,video :str):
-    r.app.logger.info("TkDownload Request")
+@app.get("/tk/download/t={taskID}")
+async def TkDownload(r: Request,taskID :str):
+    r.app.logger.info("TkDownload Request taskID:%s"%taskID)
     p = VideoService
     VideoService.SetConf(p)
-    path = VideoService.DownloadPath(p,video)
+    path = VideoService.DownloadPath(p,taskID)
     return FileResponse(
         path,
-        filename=video,
+        filename=path,
     )
 
 @app.post("/tk/greenscreen/")
