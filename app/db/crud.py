@@ -4,8 +4,8 @@ import time
 
 def open():
     return pymysql.connect(host='localhost',
-                        user='db_admin',
-                        password='Xxp719765843,.',
+                        user='root',
+                        password='root',
                         database='mask_db')
 
 def fetch(sql:str):
