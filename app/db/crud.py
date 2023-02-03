@@ -87,3 +87,10 @@ def UpdateTask(status:int,task_id:str,video_src:str):
     sql ="""UPDATE tb_mask_task SET status = %d, out_video_src= '%s' WHERE task_uuid = '%s';""" %(status,video_src,task_id)
     re = exec(sql)
     return re
+
+def GetContent(content_id:int):
+    dbModel = models.DBMaskContent
+    sql = "SELECT * FROM tb_mask_content \
+        WHERE content_id = %d" % content_id
+    re = dbModel.toModelFirstLine(dbModel,fetch(sql))
+    return re

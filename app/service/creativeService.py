@@ -25,6 +25,12 @@ class CreativeResponse(BaseModel):
     picName:str
     videoDownloadSrc:str
 
+class ContentResponse(BaseModel):
+    contentID: int
+    videoContent: str
+    postContent: str
+
+
 class CreativeService:
  
     def GetCreative(r, creativeID):
@@ -51,3 +57,16 @@ class CreativeService:
         threading.Thread(target=p.MakeNewVideoByPicVideoPath, args=(p,resp,r)).start()
        
         return taskID
+
+    def GetCreativeContent(r, creativeID):
+        creativeDB = crud.GetCreative(creativeID)
+        if creativeDB.CreativeID == 0:
+            r.app.logger.info("GetCreativeContent request 没有找到创意 creativeID:%d" % creativeID)
+            return
+        #根据CreativeJD获取视频文案
+        contentDB = crud.GetContent(creativeDB.ContentID)
+        if contentDB.ContentID == 0:
+            r.app.logger.info("GetCreativeContent request 没有找到文案 creativeID:%d,contentID:%d" % (creativeID,creativeDB.ContentID))
+            return
+            
+        return contentDB

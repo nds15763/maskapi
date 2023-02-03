@@ -47,12 +47,14 @@ async def GetCreateHandler(r: Request,created_id :int):
     taskId = CreativeService.GetCreative(r,created_id)
     return  {"taskID": taskId}
 
-# #根据创意ID获取合成视频视频
-# @app.get("/tk/get_content_by_creativeid/id={created_id}")
-# async def GetCreateHandler(r: Request,created_id :int):
-#     r.app.logger.info("GetCreateHandler Request")
-#     taskId = CreativeService.GetCreative(r,created_id)
-#     return  {"taskID": taskId}
+#根据创意ID获取合成视频视频
+@app.get("/tk/getcontent/id={created_id}")
+async def GetContentHandler(r: Request,created_id :int):
+    r.app.logger.info("GetContentHandler Request")
+    content = CreativeService.GetCreativeContent(r,created_id)
+    return {"content_id":content.ContentID,
+    "video_content":content.VideoContent,
+    "post_content":content.PostContent}
 
 #根据创意ID获取合成视频视频
 @app.get("/tk/download/t={taskID}")

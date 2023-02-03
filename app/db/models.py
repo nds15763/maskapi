@@ -131,3 +131,33 @@ class DBMaskTask:
             print("DBMaskTask toModelFirstLine Error data:",re)
         
         return tmp
+
+class DBMaskContent:
+    ContentID  :int
+    VideoContent :str
+    PostContent: str
+
+    def toModel(self,re):
+        try:
+            reDB = list[DBMaskContent]
+            for item in re:
+                tmp = DBMaskContent
+                tmp.ContentID = item[0]
+                tmp.VideoContent = item[1]
+                tmp.PostContent = item[2]
+                reDB.append(tmp)
+        except:
+            print("DBMaskContent toModel Error data:",re)
+        
+        return reDB
+
+    def toModelFirstLine(self,re):
+        try:
+                tmp = DBMaskContent
+                tmp.ContentID = re[0][0]
+                tmp.VideoContent = re[0][1]
+                tmp.PostContent = re[0][2]
+        except:
+            print("DBMaskContent toModelFirstLine Error data:",re)
+        
+        return tmp
