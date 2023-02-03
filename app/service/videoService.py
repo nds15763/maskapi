@@ -43,11 +43,16 @@ class VideoService:
         self.TempPicPath = conf.tempImgPath
         self.TempVideoPath = conf.tempVideoPath
 
-    def DownloadPath(self,task_id):
+    def DownloadPath(self,task_id,r):
         task = crud.GetTask(task_id)
+        r.app.logger.info("DownloadPath request task_id:%s" % task_id)
         if task == None:
-            return response.Response("604")
-        return self.outputVideoPath+task.OutVideoSrc
+            r.app.logger.error("DownloadPath task = %s not found" % task_id)
+            return 604,"程序内部错误，请联系管理员"
+        if task.Status != 1:
+            r.app.logger.info("DownloadPath task = %s not completed" % task_id)
+            return 605,"视频还未完成"
+        return 200,self.outputVideoPath+task.OutVideoSrc
 
     def GetNewTaskUUID(self):
         self.SetUUID(self)
@@ -71,7 +76,7 @@ class VideoService:
         #制作遮罩层
         self.picToImgMask(self,video,filename,request)
         #更新进度
-        crud.UpdateTask(1,self.taskUUID,self.outputVideo)
+        crud.UpdateTask(1,self.taskUUID,filename)
 
         return
 

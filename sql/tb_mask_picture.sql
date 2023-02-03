@@ -11,7 +11,7 @@
  Target Server Version : 80032
  File Encoding         : 65001
 
- Date: 02/02/2023 19:12:26
+ Date: 02/02/2023 20:00:33
 */
 
 SET NAMES utf8mb4;
@@ -26,5 +26,10 @@ CREATE TABLE `tb_mask_picture`  (
   `pic_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
   PRIMARY KEY (`pic_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of tb_mask_picture
+-- ----------------------------
+INSERT INTO `tb_mask_picture` VALUES (1, 'tmp_pixle3_1.jpg');
 
 SET FOREIGN_KEY_CHECKS = 1;

@@ -11,7 +11,7 @@
  Target Server Version : 80032
  File Encoding         : 65001
 
- Date: 02/02/2023 19:12:45
+ Date: 02/02/2023 20:00:40
 */
 
 SET NAMES utf8mb4;
@@ -29,5 +29,10 @@ CREATE TABLE `tb_mask_video`  (
   `create_time` datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`video_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of tb_mask_video
+-- ----------------------------
+INSERT INTO `tb_mask_video` VALUES (1, NULL, 'tmp_vitamin_babe_video.mp4', NULL, '2023-02-02 17:53:29');
 
 SET FOREIGN_KEY_CHECKS = 1;

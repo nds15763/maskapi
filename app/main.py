@@ -53,10 +53,14 @@ async def TkDownload(r: Request,taskID :str):
     r.app.logger.info("TkDownload Request taskID:%s"%taskID)
     p = VideoService
     VideoService.SetConf(p)
-    path = VideoService.DownloadPath(p,taskID)
+    code,path = VideoService.DownloadPath(p,taskID,r)
+    if code != 200:
+        return {"status_code": code,"msg":path}
+
     return FileResponse(
         path,
         filename=path,
+        status_code=code
     )
 
 @app.post("/tk/greenscreen/")
