@@ -47,6 +47,13 @@ async def GetCreateHandler(r: Request,created_id :int):
     taskId = CreativeService.GetCreative(r,created_id)
     return  {"taskID": taskId}
 
+# #根据创意ID获取合成视频视频
+# @app.get("/tk/get_content_by_creativeid/id={created_id}")
+# async def GetCreateHandler(r: Request,created_id :int):
+#     r.app.logger.info("GetCreateHandler Request")
+#     taskId = CreativeService.GetCreative(r,created_id)
+#     return  {"taskID": taskId}
+
 #根据创意ID获取合成视频视频
 @app.get("/tk/download/t={taskID}")
 async def TkDownload(r: Request,taskID :str):
