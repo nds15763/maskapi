@@ -34,27 +34,32 @@ class ContentResponse(BaseModel):
 class CreativeService:
  
     def GetCreative(r, creativeID):
-        creativeDB = crud.GetCreative(creativeID)
+        p = VideoService
+        #生成task
+        taskID = p.GetNewTaskUUID(p)
+        r.app.logger.info("GetCreative creativeID:%d 生成taskID:%s" % (creativeID,taskID))
 
+        creativeDB = crud.GetCreative(creativeID)
+        r.app.logger.info("GetCreative 查询对应创意, creativeID:%d 生成taskID:%s" % (creativeID,taskID))
         #获取创意内容
-        resp=CreativeResponse
+        resp = CreativeResponse
         resp.creativeID = creativeID
         resp.videoID = creativeDB.VideoID
 
         #根据videoID获取原始视频路径
-        videoDB= crud.GetVideo(creativeDB.VideoID)
+        videoDB = crud.GetVideo(creativeDB.VideoID)
         resp.videoName = videoDB.VideoName
+        r.app.logger.info("GetCreative 查询视频,VideoName:%s creativeID:%d 生成taskID:%s" % (videoDB.VideoName,creativeID,taskID))
 
         #根据picID获取原始图片路径
         picDB= crud.GetPicture(creativeDB.PicID)
         resp.picName = picDB.PicName
-
-        p = VideoService
-        #生成task
-        taskID = p.GetNewTaskUUID(p)
+        
         crud.CreateTask(taskID,creativeID)
+        r.app.logger.info("GetCreative 录入任务,VideoName:%s creativeID:%d 生成taskID:%s" % (videoDB.VideoName,creativeID,taskID))
+
         #调用videoService进行制作，并返回下载地址
-        threading.Thread(target=p.MakeNewVideoByPicVideoPath, args=(p,resp,r)).start()
+        threading.Thread(target=p.MakeNewVideoByPicVideoPath, args=(p,taskID,resp,r)).start()
        
         return taskID
 

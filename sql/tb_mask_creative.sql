@@ -11,7 +11,7 @@
  Target Server Version : 80032
  File Encoding         : 65001
 
- Date: 02/02/2023 20:00:03
+ Date: 03/02/2023 16:59:05
 */
 
 SET NAMES utf8mb4;
@@ -28,11 +28,16 @@ CREATE TABLE `tb_mask_creative`  (
   `content_id` int NULL DEFAULT NULL,
   `product_id` int NULL DEFAULT NULL,
   PRIMARY KEY (`creative_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tb_mask_creative
 -- ----------------------------
 INSERT INTO `tb_mask_creative` VALUES (1, 1, 1, 1, 1);
+INSERT INTO `tb_mask_creative` VALUES (2, 2, 1, 2, 1);
+INSERT INTO `tb_mask_creative` VALUES (3, 3, 1, 3, 1);
+INSERT INTO `tb_mask_creative` VALUES (4, 4, 1, 4, 1);
+INSERT INTO `tb_mask_creative` VALUES (5, 5, 1, 5, 1);
+INSERT INTO `tb_mask_creative` VALUES (6, 6, 1, 6, 1);
 
 SET FOREIGN_KEY_CHECKS = 1;

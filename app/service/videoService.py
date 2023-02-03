@@ -59,9 +59,9 @@ class VideoService:
         return self.taskUUID
 
     #根据照片路径和视频路径制作抠图视频
-    def MakeNewVideoByPicVideoPath(self,creative,request):
+    def MakeNewVideoByPicVideoPath(self,taskID,creative,r):
         self.SetConf(self)
-        request.app.logger.info("MakeNewVideoByPicVideoPath request creative:%s" % creative.__dict__)
+        r.app.logger.info("MakeNewVideoByPicVideoPath request creative:%s" % creative.__dict__)
         #赋值结构体
         self.uploadPic = creative.picName
         self.uploadVideo = creative.videoName
@@ -69,14 +69,17 @@ class VideoService:
         #图片扣色，或者扣好了传上去也行
         self.greenScrean(self,self.TempPicPath,creative.picName)
         #打开视频
-        video = self.openVideo(self,self.TempVideoPath+creative.videoName, request)
+        video = self.openVideo(self,self.TempVideoPath+creative.videoName, r)
         #去掉视频声音
-        video = self.muteVideo(self,video,request)
+        video = self.muteVideo(self,video,r)
         filename = self.taskUUID+".mp4"
         #制作遮罩层
-        self.picToImgMask(self,video,filename,request)
+        self.picToImgMask(self,video,filename,r)
+        r.app.logger.info("MakeNewVideoByPicVideoPath 视频生成完成,更新记录 taskID:%s" % (taskID))
+
         #更新进度
         crud.UpdateTask(1,self.taskUUID,filename)
+        r.app.logger.info("MakeNewVideoByPicVideoPath 更新完成 taskID:%s" % (taskID))
 
         return
 
