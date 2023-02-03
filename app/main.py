@@ -57,15 +57,19 @@ async def GetContentHandler(r: Request,created_id :int):
     "post_content":content.PostContent}
 
 #根据创意ID获取合成视频视频
+@app.get("/tk/get_task_status/id={task_id}")
+async def GetTaskStatus(r: Request,task_id :int):
+    r.app.logger.info("GetTaskStatus Request:%s"%task_id)
+    status = CreativeService.GetTaskStatus(r,task_id)
+    return {"status":status}
+
+#根据创意ID获取合成视频视频
 @app.get("/tk/download/t={taskID}")
 async def TkDownload(r: Request,taskID :str):
     r.app.logger.info("TkDownload Request taskID:%s"%taskID)
     p = VideoService
     VideoService.SetConf(p)
     code,path = VideoService.DownloadPath(p,taskID,r)
-    if code != 200:
-        return {"status_code": code,"msg":path}
-
     return FileResponse(
         path,
         filename=path,
