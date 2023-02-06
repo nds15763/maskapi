@@ -29,7 +29,7 @@ class ContentResponse():
     contentID: int
     videoContent: str
     postContent: str
-    productList: list[str]
+    productList: list
     def __init__(self,contentID,videoContent,postContent,productList):
         self.contentID = contentID
         self.videoContent = videoContent
