@@ -40,12 +40,17 @@ class DBMaskVideo:
     VideoSrc  :str
     VideoName :str
     VideoAccount:str
+    def __init__(self):
+        self.VideoID = 0
+        self.VideoSrc = ''
+        self.VideoName = ''
+        self.VideoAccount = ''
 
     def toModel(self,re):
         try:
             reDB = list[DBMaskVideo]
             for item in re:
-                tmp = DBMaskVideo
+                tmp = DBMaskVideo()
                 tmp.VideoID = item[0]
                 tmp.VideoSrc = item[1]
                 tmp.VideoName = item[2]
@@ -58,7 +63,7 @@ class DBMaskVideo:
 
     def toModelFirstLine(self,re):
         try:
-                tmp = DBMaskVideo
+                tmp = DBMaskVideo()
                 tmp.VideoID = re[0][0]
                 tmp.VideoSrc = re[0][1]
                 tmp.VideoName = re[0][2]
@@ -101,13 +106,19 @@ class DBMaskTask:
     Status:int
     OutVideoSrc:str
     CreateTime:str
+    def __init__(self):
+        self.TaskUUID = ''
+        self.Status = 0
+        self.OutVideoSrc = ''
+        self.CreateTime = ''
+        self.CreativeID = 0
 
 
     def toModel(self,re):
         try:
             reDB = list[DBMaskTask]
             for item in re:
-                tmp = DBMaskTask
+                tmp = DBMaskTask()
                 tmp.TaskUUID = item[0]
                 tmp.CreativeID = item[1]
                 tmp.Status = item[2]
@@ -121,7 +132,7 @@ class DBMaskTask:
 
     def toModelFirstLine(self,re):
         try:
-            tmp = DBMaskTask
+            tmp = DBMaskTask()
             tmp.TaskUUID = re[0][0]
             tmp.CreativeID = re[0][1]
             tmp.Status = re[0][2]

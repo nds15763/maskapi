@@ -58,7 +58,7 @@ async def GetContentHandler(r: Request,created_id :int):
 
 #根据创意ID获取合成视频视频
 @app.get("/tk/get_task_status/id={task_id}")
-async def GetTaskStatus(r: Request,task_id :int):
+async def GetTaskStatus(r: Request,task_id :str):
     r.app.logger.info("GetTaskStatus Request:%s"%task_id)
     status = CreativeService.GetTaskStatus(r,task_id)
     return {"status":status}

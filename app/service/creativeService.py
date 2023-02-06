@@ -79,8 +79,8 @@ class CreativeService:
     def GetTaskStatus(r, taskID):
         taskDB = crud.GetTask(taskID)
         if taskDB.CreativeID == 0:
-            r.app.logger.info("GetTaskStatus request 数据错误 taskID:%d" % taskID)
-            return
+            r.app.logger.info("GetTaskStatus request 数据错误 taskID:%s" % taskID)
+            return False
         if taskDB.Status == 1:
             #如果是1就代表更新完成
             return True
