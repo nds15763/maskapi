@@ -76,9 +76,8 @@ class VideoService:
         #制作遮罩层
         self.picToImgMask(self,video,filename,r)
         r.app.logger.info("MakeNewVideoByPicVideoPath 视频生成完成,更新记录 taskID:%s" % (taskID))
-
         #更新进度
-        crud.UpdateTask(1,self.taskUUID,filename)
+        crud.UpdateTask(1,taskID,filename)
         r.app.logger.info("MakeNewVideoByPicVideoPath 更新完成 taskID:%s" % (taskID))
 
         return

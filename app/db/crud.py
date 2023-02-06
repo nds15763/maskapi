@@ -36,7 +36,7 @@ def exec(sql:str):
         cursor.execute(sql)
         # 提交到数据库执行
         db.commit()
-    except pymysql.Error as e:  
+    except Exception as e: 
         print(e.args[0], e.args[1])
         # 发生错误时回滚
         db.rollback()
