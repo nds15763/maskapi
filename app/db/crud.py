@@ -95,3 +95,10 @@ def GetContent(content_id:int):
         WHERE content_id = %d" % content_id
     re = dbModel.toModelFirstLine(dbModel,fetch(sql))
     return re
+
+def GetProductList(productID:int):
+    dbModel = models.DBMaskProduct
+    sql = "SELECT * FROM tb_mask_product \
+        WHERE product_id = %d" % productID
+    re = dbModel.toModel(dbModel,fetch(sql))
+    return re

@@ -25,11 +25,16 @@ class CreativeResponse(BaseModel):
     picName:str
     videoDownloadSrc:str
 
-class ContentResponse(BaseModel):
+class ContentResponse():
     contentID: int
     videoContent: str
     postContent: str
-
+    productList: list[str]
+    def __init__(self,contentID,videoContent,postContent,productList):
+        self.contentID = contentID
+        self.videoContent = videoContent
+        self.postContent = postContent
+        self.productList = productList
 
 class CreativeService:
  
@@ -73,8 +78,11 @@ class CreativeService:
         if contentDB.ContentID == 0:
             r.app.logger.info("GetCreativeContent request 没有找到文案 creativeID:%d,contentID:%d" % (creativeID,creativeDB.ContentID))
             return
-            
-        return contentDB
+        
+        productDB = crud.GetProductList(creativeDB.ProductID)
+        re = ContentResponse(creativeDB.ContentID,contentDB.VideoContent,
+        contentDB.PostContent,productDB)
+        return re
 
     def GetTaskStatus(r, taskID):
         taskDB = crud.GetTask(taskID)

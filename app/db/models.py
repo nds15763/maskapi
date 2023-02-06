@@ -172,3 +172,33 @@ class DBMaskContent:
             print("DBMaskContent toModelFirstLine Error data:",re)
         
         return tmp
+
+class DBMaskProduct:
+    ID:int
+    ProductID:int
+    ProductName:str
+    def __init__(self):
+        self.ID = 0
+        self.ProductID = 0
+        self.ProductName = ''
+
+    def toModel(self,re):
+        try:
+            reDB = list()
+            for item in re:
+                reDB.append(item[2])
+        except Exception as e:
+            print("DBMaskProduct toModel Error data:",re,"error:",e)
+        
+        return reDB
+
+    def toModelFirstLine(self,re):
+        try:
+            tmp = DBMaskProduct
+            tmp.ID = re[0][0]
+            tmp.ProductID = re[0][1]
+            tmp.ProductName = re[0][2]
+        except:
+            print("DBMaskProduct toModelFirstLine Error data:",re)
+        
+        return tmp

@@ -52,9 +52,10 @@ async def GetCreateHandler(r: Request,created_id :int):
 async def GetContentHandler(r: Request,created_id :int):
     r.app.logger.info("GetContentHandler Request")
     content = CreativeService.GetCreativeContent(r,created_id)
-    return {"content_id":content.ContentID,
-    "video_content":content.VideoContent,
-    "post_content":content.PostContent}
+    return {"content_id":content.contentID,
+    "video_content":content.videoContent,
+    "post_content":content.postContent,
+    "product_list":content.productList}
 
 #根据创意ID获取合成视频视频
 @app.get("/tk/get_task_status/id={task_id}")
