@@ -11,7 +11,7 @@
  Target Server Version : 80032
  File Encoding         : 65001
 
- Date: 06/02/2023 17:52:09
+ Date: 06/02/2023 18:33:55
 */
 
 SET NAMES utf8mb4;
@@ -32,5 +32,8 @@ CREATE TABLE `tb_mask_product`  (
 -- Records of tb_mask_product
 -- ----------------------------
 INSERT INTO `tb_mask_product` VALUES (1, 1, 'vitamin babe setting');
+INSERT INTO `tb_mask_product` VALUES (2, 2, 'Rosemary Oil For Hair');
+INSERT INTO `tb_mask_product` VALUES (3, 3, 'PLouise The Cheek Of It Liquid Blush');
+INSERT INTO `tb_mask_product` VALUES (4, 4, 'BFF BRONZING FACE FROSTING');
 
 SET FOREIGN_KEY_CHECKS = 1;

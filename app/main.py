@@ -71,11 +71,14 @@ async def TkDownload(r: Request,taskID :str):
     p = VideoService
     VideoService.SetConf(p)
     code,path = VideoService.DownloadPath(p,taskID,r)
-    return FileResponse(
-        path,
-        filename=path,
-        status_code=code
-    )
+    if code != 200 :
+        return {"code":code}
+    else:
+        return FileResponse(
+            path,
+            filename=path,
+            status_code=code
+        )
 
 @app.post("/tk/greenscreen/")
 async def CreateUploadFilesHandler(r: Request,files: List[UploadFile] = File(...)):
