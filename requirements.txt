@@ -11,3 +11,4 @@ loguru
 pydantic
 sqlalchemy
 pymysql
+amis-python
