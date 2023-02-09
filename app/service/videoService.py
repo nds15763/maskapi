@@ -61,6 +61,7 @@ class VideoService:
     #根据照片路径和视频路径制作抠图视频
     def MakeNewVideoByPicVideoPath(self,taskID,creative,r):
         self.SetConf(self)
+        print("MakeNewVideoByPicVideoPath request")
         r.app.logger.info("MakeNewVideoByPicVideoPath request creative:%s" % creative.__dict__)
         #赋值结构体
         self.uploadPic = creative.picName
