@@ -38,12 +38,17 @@ class VideoService:
         self.taskFiles = files
 
     def SetConf(self):
-        conf = Conf()
-        self.uploadImgPath = conf.uploadImgPath
-        self.uploadVideoPath = conf.uploadVideoPath
-        self.outputVideoPath = conf.outputVideoPath
-        self.TempPicPath = conf.tempImgPath
-        self.TempVideoPath = conf.tempVideoPath
+        #conf = Conf()
+        # self.uploadImgPath = conf.uploadImgPath
+        # self.uploadVideoPath = conf.uploadVideoPath
+        # self.outputVideoPath = conf.outputVideoPath
+        # self.TempPicPath = conf.tempImgPath
+        # self.TempVideoPath = conf.tempVideoPath
+        self.uploadImgPath = "../upload/img/"
+        self.uploadVideoPath = "../upload/video/"
+        self.outputVideoPath = "../out_video/"
+        self.TempPicPath = "../template/img/"
+        self.TempVideoPath ="../template/video/"
 
     def DownloadPath(self,task_id,r):
         task = crud.GetTask(task_id)
