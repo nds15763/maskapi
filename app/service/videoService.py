@@ -9,6 +9,7 @@ from conf.conf import Conf
 import response
 import db.crud as crud
 import threading
+import traceback
 
 class VideoService:
     taskUUID = "" #本次任务UUID
@@ -81,11 +82,14 @@ class VideoService:
         return
 
     def makeVideo(self,video,filename,r,taskID):
-        #制作遮罩层
-        self.picToImgMask(self,video,filename,r)
-        r.app.logger.info("MakeNewVideoByPicVideoPath 视频生成完成,更新记录 taskID:%s" % (taskID))
-        #更新进度
-        crud.UpdateTask(1,taskID,filename)
+        try:
+            #制作遮罩层
+            self.picToImgMask(self,video,filename,r)
+            r.app.logger.info("MakeNewVideoByPicVideoPath 视频生成完成,更新记录 taskID:%s" % (taskID))
+            #更新进度
+            crud.UpdateTask(1,taskID,filename)
+        except Exception as e:
+            traceback.print_exc()
 
     def CreatUploadTask(self,request):
         request.app.logger.info("creatUploadTask request self:%s" % self.__dict__)
