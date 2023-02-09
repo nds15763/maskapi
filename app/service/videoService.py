@@ -8,6 +8,7 @@ from typing import List
 from conf.conf import Conf
 import response
 import db.crud as crud
+import threading
 
 class VideoService:
     taskUUID = "" #本次任务UUID
@@ -74,14 +75,17 @@ class VideoService:
         #去掉视频声音
         video = self.muteVideo(self,video,r)
         filename = self.taskUUID+".mp4"
+        #异步制作视频
+        threading.Thread(target=self.makeVideo, args=(self,video,filename,r,taskID)).start()
+        r.app.logger.info("MakeNewVideoByPicVideoPath 更新完成 taskID:%s" % (taskID))
+        return
+
+    def makeVideo(self,video,filename,r,taskID):
         #制作遮罩层
         self.picToImgMask(self,video,filename,r)
         r.app.logger.info("MakeNewVideoByPicVideoPath 视频生成完成,更新记录 taskID:%s" % (taskID))
         #更新进度
         crud.UpdateTask(1,taskID,filename)
-        r.app.logger.info("MakeNewVideoByPicVideoPath 更新完成 taskID:%s" % (taskID))
-
-        return
 
     def CreatUploadTask(self,request):
         request.app.logger.info("creatUploadTask request self:%s" % self.__dict__)

@@ -12,8 +12,7 @@ from pydantic import BaseModel
 from typing import Union
 # from db.database import SessionLocal
 import db.crud as crud
-import _thread
-import threading
+
 
 class CreativeRequest(BaseModel):
     creativeID: int
@@ -67,7 +66,8 @@ class CreativeService:
         #调用videoService进行制作，并返回下载地址
         try:
             # _thread.start_new_thread( p.MakeNewVideoByPicVideoPath, (p,taskID,resp,r) )
-            threading.Thread(target=p.MakeNewVideoByPicVideoPath, args=(p,taskID,resp,r)).start()
+            # threading.Thread(target=p.MakeNewVideoByPicVideoPath, args=(p,taskID,resp,r)).start()
+            p.MakeNewVideoByPicVideoPath(p,taskID,resp,r)
         except Exception as e:
             r.app.logger.error("MakeNewVideoByPicVideoPath 异步线程启动错误 生成taskID:%s" % (taskID))
             
