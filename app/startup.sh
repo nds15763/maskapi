@@ -6,4 +6,4 @@ then
     kill -9 $pid
 fi
 git pull
-gunicorn main:app --bind 0.0.0.0:8080 --worker-class uvicorn.workers.UvicornWorker
+nohup gunicorn main:app --bind 0.0.0.0:8080 --worker-class uvicorn.workers.UvicornWorker --timeout 0
