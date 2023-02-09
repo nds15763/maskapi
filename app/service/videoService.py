@@ -145,9 +145,11 @@ class VideoService:
         picBg = self.uploadImgPath+self.cvTmpImg
         self.outputVideo = filename
         try:
+            request.app.logger.info("picToImgMask makefile:%s"%self.outputVideo)
             mask = (ImageClip(picBg)
                         .set_duration(video.duration) 
                         .resize(video.size))
+            request.app.logger.info("picToImgMask set mask makefile:%s"%self.outputVideo)
             CompositeVideoClip([video, mask]).write_videofile(self.outputVideoPath+self.outputVideo)
             request.app.logger.info("picToImgMask success outputfile:%s"%self.outputVideo)
         except Exception as e:
