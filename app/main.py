@@ -33,7 +33,7 @@ def read_root(request: Request):
 @app.post("/uploadvideo/")
 async def CreateUploadFileHandler(r:Request,files: List[UploadFile] = File(...)):
     p = VideoService    
-    VideoService.SetFiles(files)
+    VideoService.SetFiles(p,files)
     fDownload = VideoService.safeUploadFile(p,files,r)
     return FileResponse(
         fDownload,
@@ -58,6 +58,13 @@ async def GetContentHandler(r: Request,created_id :int):
     "product_list":content.productList}
 
 #根据创意ID获取合成视频视频
+@app.get("/tk/get_task_status/id={task_id}")
+async def GetTaskStatus(r: Request,task_id :str):
+    r.app.logger.info("GetTaskStatus Request:%s"%task_id)
+    status = CreativeService.GetTaskStatus(r,task_id)
+    return {"status":status}
+
+#批量返回今日执行脚本内容
 @app.get("/tk/get_task_status/id={task_id}")
 async def GetTaskStatus(r: Request,task_id :str):
     r.app.logger.info("GetTaskStatus Request:%s"%task_id)

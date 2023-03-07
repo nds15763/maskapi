@@ -35,6 +35,7 @@ class VideoService:
 
     def SetFiles(self,files):
         self.SetUUID(self)
+        self.SetConf(self)
         self.taskFiles = files
 
     def SetConf(self):
@@ -228,7 +229,7 @@ class VideoService:
 
     def safeUploadFile(self,files,request):
         file = files[0]
-        re,code = self.saveFile(self.uploadVideoPath,file,"video",request)
+        re,code = self.saveFile(self,self.uploadVideoPath,file,"video",request)
         if not re:
             request.app.logger.error("creatUploadTask saveImgFile code:%d"%code)
             return response.Response(code)
