@@ -229,8 +229,29 @@ class VideoService:
 
     def safeUploadFile(self,files,request):
         file = files[0]
-        re,code = self.saveFile(self,self.uploadVideoPath,file,"video",request)
+        re,code = self.saveFileOrigin(self,self.uploadVideoPath,file,"video",request)
         if not re:
             request.app.logger.error("creatUploadTask saveImgFile code:%d"%code)
             return response.Response(code)
         return self.uploadVideoPath+self.uploadVideo
+    
+    def saveFileOrigin(self,path,file,ftype,request):
+        request.app.logger.info("saveFile path:%s,file:%s,ftype:%s"%(path,file,ftype))
+        #不存在该路径，报错
+        if not os.path.exists(path):
+            request.app.logger.error("不存在该路径 path:%s" % path)
+            return False,603
+        #判断文件类型，保存
+        save_file = file.filename
+        self.uploadVideo = file.filename
+
+        save_file = os.path.join(path, save_file)
+        # else:
+        #     return False,601
+        #保存文件
+        f = open(save_file, 'wb')
+        data = file.file.read()
+        f.write(data)
+        f.close()
+        request.app.logger.info("saveFile success filename:%s"%save_file)
+        return True,200

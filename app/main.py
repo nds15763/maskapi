@@ -40,6 +40,11 @@ async def CreateUploadFileHandler(r:Request,files: List[UploadFile] = File(...))
         filename=fDownload,
     )
 
+@app.get("/get_file/name={fname}")
+async def get_file(r: Request,fname :str):
+    re = "../upload/video/"+fname
+    return FileResponse(re,filename=re)
+
 #根据创意ID获取合成视频视频
 @app.get("/tk/getcreate/id={created_id}")
 async def GetCreateHandler(r: Request,created_id :int):
