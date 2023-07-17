@@ -31,8 +31,8 @@ def read_root(request: Request):
     request.app.logger.info("Hello MaskAPI!")
     return {"Hello": "World"}
 
-#批量上传视频
-@app.post("/uploadvideo/")
+#批量上传素材
+@app.post("/video/upload/")
 async def CreateUploadFileHandler(r:Request,files: List[UploadFile] = File(...),product_id:int = 0):
     p = VideoService
     re = p.CheckUploadRequest(p,files,product_id,r)
@@ -41,6 +41,21 @@ async def CreateUploadFileHandler(r:Request,files: List[UploadFile] = File(...),
     
     VideoService.SetFiles(p,files)
     re = VideoService.safeUploadFile(p,files,product_id,r)
+    if re != 200:
+        return response.Response(re)
+    
+    return {"code":200,"status":"success"}
+
+#上传口播视频，并且生成翻倍数量的视频
+@app.post("/video/multivideo/")
+async def MakeMultiVideoByOne(r:Request,files: List[UploadFile] = File(...),count:int = 0):
+    p = VideoService
+    re = p.CheckUploadRequest(p,files,count,r)
+    if re != 200:
+        return response.Response(re)
+    
+    VideoService.SetFiles(p,files)
+    re = VideoService.safeUploadFile(p,files,count,r)
     if re != 200:
         return response.Response(re)
     
