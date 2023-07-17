@@ -93,11 +93,23 @@ async def TkDownload(r: Request,taskID :str):
         )
 
 @app.post("/tk/greenscreen/")
-async def CreateUploadFilesHandler(r: Request,files: List[UploadFile] = File(...)):
+async def CreateUploadFilesHandler(r: Request,mute:int,files: List[UploadFile] = File(...)):
     p = VideoService
     VideoService.SetFiles(p,files)
     r.app.logger.info("create_upload_files request")
-    reFileName = VideoService.CreatUploadTask(p,r)
+    reFileName = VideoService.CreatUploadTask(p,r,mute)
+    return FileResponse(
+            reFileName,
+            filename=reFileName,
+        )
+
+
+@app.post("/tk/gst/")
+async def CreateUploadFilesHandler(r: Request, videoText:str,files: List[UploadFile] = File(...)):
+    p = VideoService
+    VideoService.SetFiles(p,files)
+    r.app.logger.info("create_upload_files request")
+    reFileName = VideoService.MakeVideoWithText(p,r,videoText)
     return FileResponse(
             reFileName,
             filename=reFileName,

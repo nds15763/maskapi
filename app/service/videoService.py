@@ -103,7 +103,7 @@ class VideoService:
         except Exception as e:
             traceback.print_exc()
 
-    def CreatUploadTask(self,request):
+    def CreatUploadTask(self,request,mute):
         request.app.logger.info("creatUploadTask request self:%s" % self.__dict__)
         self.SetConf(self)
         #保存文件
@@ -130,8 +130,11 @@ class VideoService:
         self.greenScrean(self,self.uploadImgPath, self.uploadPic)
         #打开视频
         video = self.openVideo(self,self.uploadVideoPath+self.uploadVideo,request)
-        #去掉视频声音
-        video = self.muteVideo(self,video,request)
+        
+        if mute != 1:
+            #去掉视频声音
+            video = self.muteVideo(self,video,request)
+
         outFileName = self.uploadVideo
         #制作遮罩层
         self.picToImgMask(self,video,outFileName,request)
@@ -255,3 +258,59 @@ class VideoService:
         f.close()
         request.app.logger.info("saveFile success filename:%s"%save_file)
         return True,200
+
+    def setVideoText(self,video,txt):
+        # font
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        # org
+        org = (50, 50)
+        # fontScale
+        fontScale = 1
+        # Blue color in BGR
+        color = (0, 0, 0)
+        # Line thickness of 2 px
+        thickness = 2
+        # Using cv2.putText() method
+        video = cv2.putText(video, txt, org, font, 
+                        fontScale, color, thickness, cv2.LINE_AA)
+        return video
+
+    def MakeVideoWithText(self,request,txt):
+        request.app.logger.info("MakeVideoWithText request self:%s" % self.__dict__)
+        self.SetConf(self)
+        #保存文件
+        for file in self.taskFiles:
+            #保存图片文件
+            if (self.detect_picture(self,file.filename,request)):
+                re,code = self.saveFile(self,self.uploadImgPath,file,"pic",request)
+                if not re:
+                    request.app.logger.error("MakeVideoWithText saveImgFile code:%d"%code)
+                    return response.Response(code)
+            #保存视频文件
+            elif (self.detect_video(self,file.filename,request)):
+                re,code = self.saveFile(self,self.uploadVideoPath,file,"video",request)
+                if not re:
+                    request.app.logger.error("MakeVideoWithText saveVideoFile code:%d"%code)
+                    return response.Response(code)
+                else:
+                    continue
+            else:
+                request.app.logger.error("MakeVideoWithText UnknowFileType code:%d"%602)
+                return response.Response("602")
+
+        #图片扣色，或者扣好了传上去也行
+        self.greenScrean(self,self.uploadImgPath, self.uploadPic)
+        #打开视频
+        video = self.openVideo(self,self.uploadVideoPath+self.uploadVideo,request)
+        #去掉视频声音
+        video = self.muteVideo(self,video,request)
+        #设置视频文字
+        video = self.setVideoText(self,video,txt)
+        outFileName = self.uploadVideo
+        #制作遮罩层
+        self.picToImgMask(self,video,outFileName,request)
+
+
+        return self.outputVideoPath+self.outputVideo
+
+   
