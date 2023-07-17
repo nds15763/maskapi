@@ -11,6 +11,7 @@ import uvicorn
 from fastapi_utils.tasks import repeat_every
 import cron.cron as Cron
 import logging
+import response
 
 logger = logging.getLogger(__name__)
 config_path=Path(__file__).with_name("log_config.json")
@@ -30,20 +31,20 @@ def read_root(request: Request):
     request.app.logger.info("Hello MaskAPI!")
     return {"Hello": "World"}
 
+#批量上传视频
 @app.post("/uploadvideo/")
-async def CreateUploadFileHandler(r:Request,files: List[UploadFile] = File(...)):
-    p = VideoService    
+async def CreateUploadFileHandler(r:Request,files: List[UploadFile] = File(...),product_id:int = 0):
+    p = VideoService
+    re = p.CheckUploadRequest(p,files,product_id,r)
+    if re != 200:
+        return response.Response(re)
+    
     VideoService.SetFiles(p,files)
-    fDownload = VideoService.safeUploadFile(p,files,r)
-    return FileResponse(
-        fDownload,
-        filename=fDownload,
-    )
-
-@app.get("/get_file/name={fname}")
-async def get_file(r: Request,fname :str):
-    re = "../upload/video/"+fname
-    return FileResponse(re,filename=re)
+    re = VideoService.safeUploadFile(p,files,product_id,r)
+    if re != 200:
+        return response.Response(re)
+    
+    return {"code":200,"status":"success"}
 
 #根据创意ID获取合成视频视频
 @app.get("/tk/getcreate/id={created_id}")
@@ -63,13 +64,6 @@ async def GetContentHandler(r: Request,created_id :int):
     "product_list":content.productList}
 
 #根据创意ID获取合成视频视频
-@app.get("/tk/get_task_status/id={task_id}")
-async def GetTaskStatus(r: Request,task_id :str):
-    r.app.logger.info("GetTaskStatus Request:%s"%task_id)
-    status = CreativeService.GetTaskStatus(r,task_id)
-    return {"status":status}
-
-#批量返回今日执行脚本内容
 @app.get("/tk/get_task_status/id={task_id}")
 async def GetTaskStatus(r: Request,task_id :str):
     r.app.logger.info("GetTaskStatus Request:%s"%task_id)

@@ -230,14 +230,69 @@ class VideoService:
         request.app.logger.info("detect_video filename:%s"%file)
         return file.casefold().endswith(".mp4" )
 
-    def safeUploadFile(self,files,request):
-        file = files[0]
-        re,code = self.saveFileOrigin(self,self.uploadVideoPath,file,"video",request)
-        if not re:
-            request.app.logger.error("creatUploadTask saveImgFile code:%d"%code)
-            return response.Response(code)
-        return self.uploadVideoPath+self.uploadVideo
+    #监测上传视频参数合理性
+    def CheckUploadRequest(self,files,product_id,request):
+        if product_id <=0:
+            code = 501
+            request.app.logger.error("CheckUploadRequest 参数错误 code:%d, product_id:%d,files:%d"%code,product_id,len(files))
+            return code
+        
+        if len(files) <=0:
+            code = 502
+            request.app.logger.error("CheckUploadRequest 参数错误 code:%d, product_id:%d,files:%d"%code,product_id,len(files))
+            return code
+        
+        for file in files:
+            if not (self.detect_video(self,file.filename,request)):
+                code = 502
+                request.app.logger.error("CheckUploadRequest detect_video 参数错误 code:%d, product_id:%d,files:%d"%code,product_id,len(files))
+                return code
+        return 200
     
+    #存储上传文件
+    def safeUploadFile(self,files,product_id,request):
+        #先获取产品id对应的路径
+        product_path = self.getProductPath(self,product_id)
+        if product_path == "":
+            request.app.logger.error("safeUploadFile getProductPath product_id:%d"%product_id)
+            return 605
+        
+        for file in files:
+            file.filename = self.getNewFileName(self)
+            #生成文件名
+            re,code = self.saveFileOrigin(self,product_path,file,"video",request)
+            if not re:
+                request.app.logger.error("safeUploadFile saveFileOrigin code:%d"%code)
+                return code
+            
+            #获取视频时长
+            duration = self.get_duration_from_cv2(self,product_path+"\\"+file.filename)
+            if duration > 0:
+                #存储数据库
+                crud.CreateVideo(file.filename,product_path+"\\"+file.filename,duration,product_id,"")
+            else:
+                request.app.logger.error("safeUploadFile get_duration_from_cv2 code:%d"%606)
+                return 606
+
+        return 200
+    
+    #生成新的文件名
+    def getNewFileName(self):
+        return uuid.uuid4().hex+".mp4"
+
+    def get_duration_from_cv2(self,filename):
+        cap = cv2.VideoCapture(filename)
+        if cap.isOpened():
+            rate = cap.get(5)
+            frame_num =cap.get(7)
+            duration = frame_num/rate
+            return duration
+        return -1
+
+    def getProductPath(self,product_id):
+        re = crud.GetProduct(product_id)
+        return re.ProductDir
+
     def saveFileOrigin(self,path,file,ftype,request):
         request.app.logger.info("saveFile path:%s,file:%s,ftype:%s"%(path,file,ftype))
         #不存在该路径，报错
