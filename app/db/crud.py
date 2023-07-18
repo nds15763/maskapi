@@ -67,3 +67,14 @@ def UpdateTask(status:int,task_id:str,video_src:str):
     re = exec(sql)
     return re
 
+def GetVideoIDList(product_id:int,video_length:float):
+    dbModel = models.UsoVideo
+    sql = "select id from uso_video where product_id = %d and video_length =" % product_id + str(video_length)
+    re = dbModel.toIDList(dbModel,fetch(sql))
+    return re
+
+def GetVideoList(product_ids:str):
+    dbModel = models.UsoVideo
+    sql = "select * from uso_video where product_id in (%s) " % product_ids
+    re = dbModel.toModelList(dbModel,fetch(sql))
+    return re

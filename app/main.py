@@ -28,8 +28,8 @@ app = create_app()
 
 @app.get("/")
 def read_root(request: Request):
-    request.app.logger.info("Hello MaskAPI!")
-    return {"Hello": "World"}
+    request.app.logger.info("Hello USOAPI!")
+    return {"Hello": "USOAPI"}
 
 #批量上传素材
 @app.post("/video/upload/")
@@ -53,28 +53,15 @@ async def CreateProductHandler(r: Request,product_id:int,product_name:str):
     taskId = CreativeService.CreateProduct(r,product_id,product_name)
     return  {"taskID": taskId}
 
-#根据创意ID获取合成视频视频
-@app.get("/product/get_list/")
-async def ProductListHandler(r: Request,product_id:int,product_name:str):
-    r.app.logger.info("ProductListHandler Request")
-    taskId = CreativeService.GetProductList(r,product_id,product_name)
-    return  {"taskID": taskId}
-
-
 #上传口播视频，返回提供下载的连接
 @app.post("/video/multivideo/")
-async def MakeMultiVideoByOne(r:Request,files: List[UploadFile] = File(...),count:int = 0):
+async def MakeMultiVideoByOne(r:Request,product_id:int,count:int,speach_lenght:int = 15):
     p = VideoService
-    # re = p.CheckUploadRequest(p,files,count,r)
-    # if re != 200:
-    #     return response.Response(re)
-    
-    # VideoService.SetFiles(p,files)
-    re = VideoService.multivideo(p,files,count,r)
-    if re != 200:
+    code,re = p.multivideo(p,product_id,count,speach_lenght,r)
+    if code != 200:
         return response.Response(re)
     
-    return {"code":200,"status":"success"}
+    return re
 
 #根据创意ID获取合成视频视频
 @app.get("/tk/getcreate/id={created_id}")

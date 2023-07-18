@@ -1,3 +1,5 @@
+import copy
+
 class DBMaskCreative:
     CreativeID :int
     VideoID:int
@@ -230,5 +232,73 @@ class UsoProduct:
             tmp.ProductDir = re[0][2]
         except:
             print("UsoProduct toModelFirstLine Error data:",re)
+        
+        return tmp
+    
+class UsoVideo:
+    ID:int
+    ProductID:int
+    VideoLength:float
+    VideoName:str
+    VideoType:str
+    UploadPerson:str
+    UpdateTime:str
+    VideoFullPath:str
+
+    def __init__(self):
+        self.ID = 0
+        self.ProductID = 0
+        self.VideoLength = 0.0
+        self.VideoName = ''
+        self.VideoType = ''
+        self.UploadPerson = ''
+        self.UpdateTime = ''
+        self.VideoFullPath = ''
+
+    def toIDList(self,re):
+        try:
+            reDB = list()
+            for item in re:
+                reDB.append(item[0])
+
+        except Exception as e:
+            print("UsoVideo toIDList Error data:",re,"error:",e)
+        
+        return reDB
+
+    def toModelList(self,re):
+        try:
+            reDB = list()
+            for t in re:
+                tmp = UsoVideo()
+                tmp.ID =t[0]
+                tmp.ProductID = t[1]
+                tmp.VideoLength =t[2]
+                tmp.VideoName = t[3]
+                tmp.VideoType = t[4]
+                tmp.UploadPerson = t[5]
+                tmp.UpdateTime = t[6]
+                tmp.VideoFullPath = t[7]
+                reDB.append(tmp)
+
+        except Exception as e:
+            print("UsoVideo toModelList Error data:",re,"error:",e)
+        
+        return reDB
+    
+    def toModelFirstLine(self,re):
+        try:
+            tmp = UsoVideo
+            tmp.ID = re[0][0]
+            tmp.ProductID = re[0][1]
+            tmp.VideoLength = re[0][2]
+            tmp.VideoName = re[0][3]
+            tmp.VideoType = re[0][4]
+            tmp.UploadPerson = re[0][5]
+            tmp.UpdateTime = re[0][6]
+            tmp.VideoFullPath = re[0][7]
+
+        except:
+            print("UsoVideo toModelFirstLine Error data:",re)
         
         return tmp

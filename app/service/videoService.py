@@ -10,6 +10,7 @@ import response
 import db.crud as crud
 import threading
 import traceback
+import random
 
 class VideoService:
     taskUUID = "" #本次任务UUID
@@ -266,6 +267,89 @@ class VideoService:
     def getProductPath(self,product_id):
         re = crud.GetProduct(product_id)
         return re.ProductDir
+    
+    #根据生成的数量，返回选择的视频，还有视频的下载地址
+    def multivideo(self,product_id,count,speach_lenght,request):
+        #request.app.logger.info("multivideo request product_id:%d,count:%d,speach_lenght:%d"%product_id,count,speach_lenght)
+        
+        GroupA,GroupB,GroupC,video_lengths = self.makeABCData(self,product_id,count,speach_lenght,request)
+
+        sort_video_list = []
+        for x in range(count):
+            randomlist = self.randomVideo(self,GroupA,GroupB,GroupC,video_lengths,speach_lenght,request)
+            sort_video_list.append(randomlist)
+
+        video_dict = {}
+        for v_list in sort_video_list:
+            for y in v_list:
+                video_dict[y] = 1
+
+        #然后根据选择出来的视频去查询对应的视频地址
+        video_download_dict = self.getVideoPath(self,video_dict,product_id,request)
+
+        #通过product_id 产品视频
+        return 200,{
+            "video_sort_list":sort_video_list,
+            "video_download_dict":video_download_dict
+        }
+    
+    def getVideoPath(self,video_dict,product_id,request):
+        video_src_list = []
+        for id in video_dict:
+            video_src_list.append(str(id))
+        dou = ','
+        videoIDStr = dou.join(video_src_list)
+        video_list = crud.GetVideoList(videoIDStr)
+        product_dir = self.getProductPath(self,product_id)
+        video_download_dict = {}
+        for video in video_list:
+            video_download_dict[video.ID] = product_dir+"\\"+video.VideoName
+
+        return video_download_dict
+    
+    def randomVideo(self,A,B,C,video_lengths,speach_lenght,request):
+        selected_videos = []
+        #这里video_groups是代表的2.5,5,7.5三个视频组
+        #现在这三个组是需要查询出来的
+        video_groups = [A, B, C]
+        
+        while sum(video_lengths[v] for v in selected_videos) < speach_lenght:
+            group = random.choice(video_groups)
+            video = random.choice(group)
+            
+            if video not in selected_videos:
+                selected_videos.append(video)
+
+        return selected_videos
+
+    def makeABCData(self,product_id,count,speach_lenght,request):
+        A = self.getVideoGroup(self,"A",product_id,request)#查询出A组合适的所有ID
+        B = self.getVideoGroup(self,"B",product_id,request)#查询出A组合适的所有ID
+        C = self.getVideoGroup(self,"C",product_id,request)
+
+        #查询出组合适的所有ID
+        video_lengths = {}
+        for ID in A:
+            video_lengths[ID] = 7.5
+        for ID in B:
+            video_lengths[ID] = 5
+        for ID in C:
+            video_lengths[ID] = 2.5
+
+        return A,B,C,video_lengths
+
+    def getVideoGroup(self,group_id,prouct_id,request):
+        #A组是7.5秒的视频
+        #B组是5秒的视频
+        #C组是2.5的视频
+        if group_id == "A":
+            return crud.GetVideoIDList(prouct_id,7.5)
+        elif group_id == "B":
+            return crud.GetVideoIDList(prouct_id,5)
+        elif group_id == "C":
+            return crud.GetVideoIDList(prouct_id,2.5)
+        else:
+            return []
 
     #存储上传文件
     def safeUploadFile(self,files,product_id,request):
@@ -369,5 +453,3 @@ class VideoService:
 
 
         return self.outputVideoPath+self.outputVideo
-
-   
