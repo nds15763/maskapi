@@ -99,3 +99,36 @@ class CreativeService:
             #如果是1就代表更新完成
             return True
         return False
+    
+    def CreateProduct(r, creativeID):
+        p = VideoService
+        #生成task
+        taskID = p.GetNewTaskUUID(p)
+        r.app.logger.info("GetCreative creativeID:%d 生成taskID:%s" % (creativeID,taskID))
+
+        creativeDB = crud.GetCreative(creativeID)
+        r.app.logger.info("GetCreative 查询对应创意, creativeID:%d 生成taskID:%s" % (creativeID,taskID))
+        #获取创意内容
+        resp = CreativeResponse
+        resp.creativeID = creativeID
+        resp.videoID = creativeDB.VideoID
+
+        #根据videoID获取原始视频路径
+        videoDB = crud.GetVideo(creativeDB.VideoID)
+        resp.videoName = videoDB.VideoName
+        r.app.logger.info("GetCreative 查询视频,VideoName:%s creativeID:%d 生成taskID:%s" % (videoDB.VideoName,creativeID,taskID))
+
+        #根据picID获取原始图片路径
+        picDB= crud.GetPicture(creativeDB.PicID)
+        resp.picName = picDB.PicName
+        
+        crud.CreateTask(taskID,creativeID)
+        r.app.logger.info("GetCreative 录入任务,VideoName:%s creativeID:%d 生成taskID:%s" % (videoDB.VideoName,creativeID,taskID))
+
+        #调用videoService进行制作，并返回下载地址
+        try:
+            p.MakeNewVideoByPicVideoPath(p,taskID,resp,r)
+        except Exception as e:
+            traceback.print_exc()
+            r.app.logger.error("MakeNewVideoByPicVideoPath 异步线程启动错误 e:%s,生成taskID:%s" % (e,taskID))
+            

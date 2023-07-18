@@ -267,6 +267,34 @@ class VideoService:
         re = crud.GetProduct(product_id)
         return re.ProductDir
 
+    #存储上传文件
+    def safeUploadFile(self,files,product_id,request):
+        #先获取产品id对应的路径
+        product_path = self.getProductPath(self,product_id)
+        if product_path == "":
+            request.app.logger.error("safeUploadFile getProductPath product_id:%d"%product_id)
+            return 605
+        
+        for file in files:
+            file.filename = self.getNewFileName(self)
+            #生成文件名
+            re,code = self.saveFileOrigin(self,product_path,file,"video",request)
+            if not re:
+                request.app.logger.error("safeUploadFile saveFileOrigin code:%d"%code)
+                return code
+            
+            #获取视频时长
+            duration = self.get_duration_from_cv2(self,product_path+"\\"+file.filename)
+            if duration > 0:
+                #存储数据库
+                crud.CreateVideo(file.filename,product_path+"\\"+file.filename,duration,product_id,"")
+            else:
+                request.app.logger.error("safeUploadFile get_duration_from_cv2 code:%d"%606)
+                return 606
+
+        return 200
+    
+
     def saveFileOrigin(self,path,file,ftype,request):
         request.app.logger.info("saveFile path:%s,file:%s,ftype:%s"%(path,file,ftype))
         #不存在该路径，报错

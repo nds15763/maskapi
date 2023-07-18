@@ -46,16 +46,31 @@ async def CreateUploadFileHandler(r:Request,files: List[UploadFile] = File(...),
     
     return {"code":200,"status":"success"}
 
-#上传口播视频，并且生成翻倍数量的视频
+#根据创意ID获取合成视频视频
+@app.get("/product/create/")
+async def CreateProductHandler(r: Request,product_id:int,product_name:str):
+    r.app.logger.info("CreateProductHandler Request")
+    taskId = CreativeService.CreateProduct(r,product_id,product_name)
+    return  {"taskID": taskId}
+
+#根据创意ID获取合成视频视频
+@app.get("/product/get_list/")
+async def ProductListHandler(r: Request,product_id:int,product_name:str):
+    r.app.logger.info("ProductListHandler Request")
+    taskId = CreativeService.GetProductList(r,product_id,product_name)
+    return  {"taskID": taskId}
+
+
+#上传口播视频，返回提供下载的连接
 @app.post("/video/multivideo/")
 async def MakeMultiVideoByOne(r:Request,files: List[UploadFile] = File(...),count:int = 0):
     p = VideoService
-    re = p.CheckUploadRequest(p,files,count,r)
-    if re != 200:
-        return response.Response(re)
+    # re = p.CheckUploadRequest(p,files,count,r)
+    # if re != 200:
+    #     return response.Response(re)
     
-    VideoService.SetFiles(p,files)
-    re = VideoService.safeUploadFile(p,files,count,r)
+    # VideoService.SetFiles(p,files)
+    re = VideoService.multivideo(p,files,count,r)
     if re != 200:
         return response.Response(re)
     
