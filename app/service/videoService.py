@@ -11,6 +11,7 @@ import db.crud as crud
 import threading
 import traceback
 import random
+import zipfile
 
 class VideoService:
     taskUUID = "" #本次任务UUID
@@ -62,6 +63,30 @@ class VideoService:
             r.app.logger.info("DownloadPath task = %s not completed" % task_id)
             return 605,"视频还未完成"
         return 200,self.outputVideoPath+task.OutVideoSrc
+    
+    def DownloadVideoCut(self,video_id,token,r):
+        videos = crud.GetVideoList(video_id)
+        r.app.logger.info("DownloadVideoCut request video_id:%s,token:%s" %(video_id,token))
+  
+        #更新token状态
+        # crud.UpdateToken(token)
+        
+        #拉取所有videos里面的地址video_fullpath
+        file_names = []
+        for v in videos:
+            file_names.append(v.VideoFullPath)
+        #把所有这些视频压缩成一个zip包,保存到out_videos里面
+        zip_file_name = token+".zip"
+        outpath = os.path.abspath(os.path.join(os.getcwd(), "../maskapi/out_video/"))
+        output_zip = outpath+zip_file_name 
+        r.app.logger.info("DownloadVideoCut request video_id:%s,token:%s,outpath:%s" %(video_id,token,output_zip))
+        with zipfile.ZipFile(output_zip, 'w') as zipf:
+            for file in file_names:
+                zipf.write(file, os.path.basename(file))          
+        
+        # crud.CreateVideoLog(2,token+".zip")
+        #返回zip包地址
+        return 200,output_zip
 
     def GetNewTaskUUID(self):
         self.SetUUID(self)
@@ -453,3 +478,6 @@ class VideoService:
 
 
         return self.outputVideoPath+self.outputVideo
+
+    def GetProductList(self,request,product_id):
+        return crud.GetProductList()

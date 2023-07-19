@@ -47,6 +47,15 @@ async def CreateUploadFileHandler(r:Request,files: List[UploadFile] = File(...),
     return {"code":200,"status":"success"}
 
 #根据创意ID获取合成视频视频
+@app.get("/product/list/")
+async def GetProductListHandler(r: Request,product_id:int):
+    r.app.logger.info("GetProductListHandler Request")
+    p = VideoService
+    productInfo = p.GetProductList(p,r,product_id)
+    return productInfo
+
+
+#根据创意ID获取合成视频视频
 @app.get("/product/create/")
 async def CreateProductHandler(r: Request,product_id:int,product_name:str):
     r.app.logger.info("CreateProductHandler Request")
@@ -62,6 +71,23 @@ async def MakeMultiVideoByOne(r:Request,product_id:int,count:int,speach_lenght:i
         return response.Response(re)
     
     return re
+
+#根据创意ID获取合成视频视频
+@app.get("/video/download/vid={videoID},token={token}")
+async def VideoDownload(r: Request,videoID :str,token:str):
+    #r.app.logger.info("VideoDownload Request videoID:%s,token:%s"%videoID,token)
+    p = VideoService
+    VideoService.SetConf(p)
+    code,path = VideoService.DownloadVideoCut(p,videoID,token,r)
+    if code != 200 :
+        return {"code":code}
+    else:
+        return FileResponse(
+            path,
+            filename=token+".zip",
+            status_code=code
+        )
+
 
 #根据创意ID获取合成视频视频
 @app.get("/tk/getcreate/id={created_id}")

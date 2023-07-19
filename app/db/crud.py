@@ -52,6 +52,11 @@ def GetProduct(product_id:int):
     re = dbModel.toModelFirstLine(dbModel,fetch(sql))
     return re
 
+def GetProductList():
+    dbModel = models.UsoProduct
+    sql = "SELECT id,product_name FROM uso_product"
+    re = dbModel.toModelList(dbModel,fetch(sql))
+    return re
 
 def CreateVideo(video_name:str,video_fullpath:str,video_length:float,product_id:int,video_type:str):
     # SQL 插入语句
@@ -77,4 +82,10 @@ def GetVideoList(product_ids:str):
     dbModel = models.UsoVideo
     sql = "select * from uso_video where product_id in (%s) " % product_ids
     re = dbModel.toModelList(dbModel,fetch(sql))
+    return re
+
+def CreateVideoLog(status:int,task_id:str,video_src:str):
+    # SQL 插入语句
+    sql ="""UPDATE tb_mask_task SET status = %d, out_video_src= '%s' WHERE task_uuid = '%s';""" %(status,video_src,task_id)
+    re = exec(sql)
     return re

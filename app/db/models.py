@@ -214,19 +214,23 @@ class UsoProduct:
         self.ProductName = 0
         self.ProductDir = ''
 
-    def toModel(self,re):
+    def toModelList(self,re):
         try:
             reDB = list()
-            for item in re:
-                reDB.append(item[2])
+            for t in re:
+                tmp = UsoProduct()
+                tmp.ID =t[0]
+                tmp.ProductName = t[1]
+                reDB.append(tmp)
+
         except Exception as e:
-            print("UsoProduct toModel Error data:",re,"error:",e)
+            print("UsoProduct toModelList Error data:",re,"error:",e)
         
         return reDB
 
     def toModelFirstLine(self,re):
         try:
-            tmp = UsoProduct
+            tmp = UsoProduct()
             tmp.ID = re[0][0]
             tmp.ProductName = re[0][1]
             tmp.ProductDir = re[0][2]
