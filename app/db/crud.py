@@ -6,7 +6,7 @@ import time
 def open():
     return pymysql.connect(host='localhost',
                         user='root',
-                        password='root',
+                        password='1qaz!QAZ',
                         database='uso_dev')
 
 def fetch(sql:str):
