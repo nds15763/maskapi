@@ -1,5 +1,5 @@
 daemon=True #是否守护
-bind='0.0.0.0:8080'#绑定
+bind='0.0.0.0:8081'#绑定
 pidfile='gunicorn.pid'#pid文件地址
 chdir='.' # 项目地址
 worker_class='uvicorn.workers.UvicornWorker'
