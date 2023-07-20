@@ -88,6 +88,11 @@ class VideoService:
         #返回zip包地址
         return 200,output_zip
 
+    def DownloadVideoZip(self,token,r):
+        zippath = os.path.abspath(os.path.join(os.getcwd(), "../maskapi/out_video/"))
+        output_zip = zippath+"_"+token+".zip"
+        return 200,output_zip
+
     def GetNewTaskUUID(self):
         self.SetUUID(self)
         return self.taskUUID
@@ -312,11 +317,44 @@ class VideoService:
         #然后根据选择出来的视频去查询对应的视频地址
         video_download_dict = self.getVideoPath(self,video_dict,product_id,request)
 
+        #返回一个token
+        token = uuid.uuid4().hex
+
+        #然后打一个压缩包
+        zippath = self.ZipVideoCut(self,video_download_dict,token,request)
+        
+        #更新token状态
+
         #通过product_id 产品视频
         return 200,{
             "video_sort_list":sort_video_list,
-            "video_download_dict":video_download_dict
+            "video_download_dict":video_download_dict,
+            "token":token,
+            "zip_path":zippath
         }
+    
+    
+    def ZipVideoCut(self,video_download_dict,token,request):
+        #更新token状态
+        # crud.UpdateToken(token)
+        
+        #拉取所有videos里面的地址video_fullpath
+        file_names = []
+        for v in video_download_dict:
+            file_names.append(video_download_dict[v])
+        #把所有这些视频压缩成一个zip包,保存到out_videos里面
+        zip_file_name = token+".zip"
+        outpath = os.path.abspath(os.path.join(os.getcwd(), "../maskapi/out_video/"))
+        output_zip = outpath+"_"+zip_file_name 
+        try:
+            with zipfile.ZipFile(output_zip, 'w') as zipf:
+                for file in file_names:
+                    zipf.write(file, os.path.basename(file))    
+        except Exception as e:
+            request.app.logger.error("safeUploadFile saveFileOrigin error:%s"%e)
+        # crud.CreateVideoLog(2,token+".zip")
+        #返回zip包地址
+        return output_zip
     
     def getVideoPath(self,video_dict,product_id,request):
         video_src_list = []
@@ -325,10 +363,10 @@ class VideoService:
         dou = ','
         videoIDStr = dou.join(video_src_list)
         video_list = crud.GetVideoList(videoIDStr)
-        product_dir = self.getProductPath(self,product_id)
+        #product_dir = self.getProductPath(self,product_id)
         video_download_dict = {}
         for video in video_list:
-            video_download_dict[video.ID] = product_dir+"\\"+video.VideoName
+            video_download_dict[video.ID] = video.VideoFullPath
 
         return video_download_dict
     
@@ -396,7 +434,7 @@ class VideoService:
             duration = self.get_duration_from_cv2(self,product_path+"\\"+file.filename)
             if duration > 0:
                 #存储数据库
-                crud.CreateVideo(file.filename,product_path+"\\"+file.filename,duration,product_id,"")
+                crud.CreateVideo(file.filename,product_path+'\\'+file.filename,duration,product_id,"")
             else:
                 request.app.logger.error("safeUploadFile get_duration_from_cv2 code:%d"%606)
                 return 606

@@ -73,12 +73,12 @@ async def MakeMultiVideoByOne(r:Request,product_id:int,count:int,speach_lenght:i
     return re
 
 #根据创意ID获取合成视频视频
-@app.get("/video/download/vid={videoID},token={token}")
-async def VideoDownload(r: Request,videoID :str,token:str):
+@app.get("/zip/download/token={token}")
+async def ZipDownload(r: Request,token:str):
     #r.app.logger.info("VideoDownload Request videoID:%s,token:%s"%videoID,token)
     p = VideoService
     VideoService.SetConf(p)
-    code,path = VideoService.DownloadVideoCut(p,videoID,token,r)
+    code,path = VideoService.DownloadVideoZip(p,token,r)
     if code != 200 :
         return {"code":code}
     else:
