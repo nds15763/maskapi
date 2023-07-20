@@ -105,3 +105,11 @@ def CreateVideoToken(token:str,status:int,create_time:str):
     sql ="INSERT INTO `uso_dev`.`uso_download_token` (`token`, `status`, `create_time`) VALUES ('%s', %d, '%s');" %(token,0,now)
     re = exec(sql)
     return re
+
+def CreateProdut(product_name:str,product_path:str):
+    # SQL 插入语句
+    now = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) 
+    sql ="INSERT INTO `uso_dev`.`uso_product` ( `product_name`, `product_dir`) VALUES \
+    ('%s', '%s');"%(product_name,product_path)
+    re = exec(sql)
+    return re

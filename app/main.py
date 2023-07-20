@@ -31,6 +31,14 @@ def read_root(request: Request):
     request.app.logger.info("Hello USOAPI!")
     return {"Hello": "USOAPI"}
 
+#添加产品
+@app.post("/product/create/")
+async def CreateUploadFileHandler(r:Request,product_name:str = ""):
+    p = VideoService
+    re = p.CreateProduct(p,product_name,r)
+    if re != 200:
+        return response.Response(re)
+
 #批量上传素材
 @app.post("/video/upload/")
 async def CreateUploadFileHandler(r:Request,files: List[UploadFile] = File(...),product_id:int = 0):
@@ -56,11 +64,11 @@ async def GetProductListHandler(r: Request,product_id:int):
 
 
 #根据创意ID获取合成视频视频
-@app.get("/product/create/")
-async def CreateProductHandler(r: Request,product_id:int,product_name:str):
-    r.app.logger.info("CreateProductHandler Request")
-    taskId = CreativeService.CreateProduct(r,product_id,product_name)
-    return  {"taskID": taskId}
+# @app.get("/product/create/")
+# async def CreateProductHandler(r: Request,product_id:int,product_name:str):
+#     r.app.logger.info("CreateProductHandler Request")
+#     taskId = CreativeService.CreateProduct(r,product_id,product_name)
+#     return  {"taskID": taskId}
 
 #上传口播视频，返回提供下载的连接
 @app.post("/video/multivideo/")

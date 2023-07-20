@@ -12,6 +12,7 @@ import threading
 import traceback
 import random
 import zipfile
+import re
 
 class VideoService:
     taskUUID = "" #本次任务UUID
@@ -519,3 +520,15 @@ class VideoService:
 
     def GetProductList(self,request,product_id):
         return crud.GetProductList()
+    
+        #存储上传文件
+    def CreateProduct(self,product_name,request):
+        product_path = re.sub(r'[^\w\s]', '', product_name)
+
+        # 使用replace替换空格为下划线
+        product_path = product_path.replace(' ', '_')
+
+        product_path = "D:\\\\uso_ftp\sucai\\\\" + product_path + "\\\\"
+        #存储数据库
+        crud.CreateProdut(product_name,product_path)
+        return 200
