@@ -8,7 +8,6 @@ from log.custom_logging import CustomizeLogger
 from service.creativeService import CreativeService,CreativeRequest
 from pathlib import Path
 import uvicorn
-from fastapi_utils.tasks import repeat_every
 import cron.cron as Cron
 import logging
 import response
@@ -159,13 +158,6 @@ async def CreateUploadFilesHandler(r: Request, videoText:str,files: List[UploadF
             reFileName,
             filename=reFileName,
         )
-
-@app.on_event("startup")
-@repeat_every(seconds=60*60,wait_first=True)
-def Cronjob():
-    print("CronJob StartUp")
-    Cron.CronJob.CronDeleteUploadedFile()
-    print("CronJob Finished")
 
 if __name__ == "__main__":
     uvicorn.run(app="main:app", host="127.0.0.1", port=8081, reload=True)
